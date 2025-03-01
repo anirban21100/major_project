@@ -1,6 +1,5 @@
-# module 1
 import tensorflow as tf
-from block_1.dcl import DCL
+from code_base.pipeline.block_1.dcl import DCL
 from tensorflow.python.keras.layers import (
     Activation,
     Add,
@@ -16,7 +15,7 @@ class Block2(tf.keras.layers.Layer):
     def __init__(self):
       super().__init__()
 
-    def __call__(self, inputs):
+    def call(self, inputs):
         x = DCL()(inputs)
         # This is the input to the dense block
         # First SeparableConv2D layer

@@ -1,5 +1,4 @@
-# module 1
-from block_3.dcl import DCL
+from code_base.pipeline.block_3.dcl import DCL
 import tensorflow as tf
 from tensorflow.python.keras.layers import (
     Activation,

@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow import keras
+# from tensorflow import keras
 from tensorflow.python.keras.layers import (
     ELU,
     BatchNormalization,
@@ -15,10 +15,10 @@ from tensorflow.python.keras.regularizers import l2
 
 class PreBlock(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, img_input):
-      x = SeparableConv2D(
+        x = SeparableConv2D(
             16,
             (3, 3),
             strides=(1, 1),
@@ -27,8 +27,7 @@ class PreBlock(tf.keras.layers.Layer):
             pointwise_initializer="he_normal",
             use_bias=False,
         )(img_input)
-      x = BatchNormalization()(x)
-      x_offset = LeakyReLU(alpha=0.2)(x)
+        x = BatchNormalization()(x)
+        x_offset = LeakyReLU(alpha=0.2)(x)
 
-      return x_offset
-
+        return x_offset

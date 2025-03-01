@@ -7,7 +7,12 @@ from tensorflow.python.keras.layers import (
     MaxPooling2D,
     SeparableConv2D,
 )
+
+
 class DCL(tf.keras.layers.Layer):
+    def __init__(self):
+        super().__init__()
+
     def call(self, inputs):
         x114 = Concat()(inputs)
         x = SeparableConv2D(

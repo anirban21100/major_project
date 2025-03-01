@@ -1,7 +1,4 @@
-# module 1
 import tensorflow as tf
-from code_base.pipeline.preblock.pre_block import PreBlock
-# from code_base.utils.constants import input_shape
 from tensorflow.python.keras.layers import (
     Activation,
     Add,

@@ -1,14 +1,14 @@
+import tensorflow as tf
+from keras import layers
 from block_2 import Block2
 from eca import ECALayer
-from keras import layers
-import tensorflow as tf
-from block_1.dcl import DCL
+from code_base.pipeline.block_1.dcl import DCL
 
 
 class Concat(tf.keras.layers.Layer):
     def __init__(self):
       super().__init__()
-      
+
     def call(self, inputs):
         x_offset = DCL()(inputs)
         output = Block2()(x_offset)

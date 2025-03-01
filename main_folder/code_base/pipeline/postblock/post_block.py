@@ -1,5 +1,5 @@
 from block_4.dcl import DCL
-from utils.constants import input_shape
+from code_base.utils.constants import input_shape
 import tensorflow as tf
 from tensorflow.python.keras.layers import GlobalMaxPooling2D, Dense, Input
 from tensorflow.python.keras.models import Model

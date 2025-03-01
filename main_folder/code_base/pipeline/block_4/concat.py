@@ -1,8 +1,8 @@
-from block_4 import Block4
 import tensorflow as tf
-from eca import ECALayer
 from keras import layers
-from block_3.dcl import DCL
+from block_4 import Block4
+from eca import ECALayer
+from code_base.pipeline.block_3.dcl import DCL
 
 class Concat(tf.keras.layers.Layer):
     def __init__(self):

@@ -1,5 +1,5 @@
-from block_2.dcl import DCL
 import tensorflow as tf
+from code_base.pipeline.block_2.dcl import DCL
 from tensorflow.python.keras.layers import (
     Activation,
     Add,
