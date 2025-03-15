@@ -9,10 +9,7 @@ from tensorflow.keras.layers import (
     PReLU,
     SeparableConv2D,
 )
-from tensorflow.python.keras.regularizers import l2
-
-# from utils.constants import input_shape
-
+from tensorflow.keras.regularizers import l2
 
 class PreBlock(tf.keras.layers.Layer):
     def __init__(self):

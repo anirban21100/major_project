@@ -12,12 +12,7 @@ class Concat(tf.keras.layers.Layer):
     def call(self, inputs):
         x_offset = DCL()(inputs)
         output = Block2()(x_offset)
-        # Create an instance of the ECALayer
         eca_layer = ECALayer(k_size=3)
-
-        # Apply ECA module to the input
         channel_attention_map1 = eca_layer(x_offset)
-        channel_attention_map1.shape
-
         x112 = layers.add([channel_attention_map1, output])
         return x112

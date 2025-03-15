@@ -6,7 +6,6 @@ from tensorflow.keras.layers import  (
     Reshape,
 )
 
-
 class ECALayer(tf.keras.layers.Layer):
     def __init__(self, k_size=3, **kwargs):
         super(ECALayer, self).__init__(

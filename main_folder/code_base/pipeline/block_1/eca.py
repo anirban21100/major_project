@@ -6,7 +6,6 @@ from tensorflow.keras.layers import (
     Reshape,
 )
 
-
 class ECALayer(tf.keras.layers.Layer):
     def __init__(self, k_size=3, **kwargs):
         super(ECALayer, self).__init__(
@@ -29,5 +28,3 @@ class ECALayer(tf.keras.layers.Layer):
             y, (-1, 1, 1, y.shape[-1])
         )  # Shape: (batch_size, 1, 1, channels)
         return inputs * y
-
-    # Create an instance of the ECALayer
