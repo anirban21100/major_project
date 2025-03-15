@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.python.keras.layers import (
+from tensorflow.keras.layers import (
     Conv1D,
     GlobalAveragePooling2D,
     Multiply,
