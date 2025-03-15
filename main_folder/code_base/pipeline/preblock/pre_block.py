@@ -1,7 +1,6 @@
 import tensorflow as tf
-
-# from tensorflow import keras
-from tensorflow.keras.layers import (
+from tensorflow import keras
+from keras.layers import (
     ELU,
     BatchNormalization,
     Input,
@@ -11,7 +10,7 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.regularizers import l2
 
-class PreBlock(tf.keras.layers.Layer):
+class PreBlock(keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
@@ -27,5 +26,4 @@ class PreBlock(tf.keras.layers.Layer):
         )(img_input)
         x = BatchNormalization()(x)
         x_offset = LeakyReLU(alpha=0.2)(x)
-
         return x_offset
