@@ -11,7 +11,7 @@ class Concat(tf.keras.layers.Layer):
 
     def call(self, inputs):
         x_offset = DCL()(inputs)
-        output = Block2()(x_offset)
+        output = Block2()(inputs)
         eca_layer = ECALayer(k_size=3)
         channel_attention_map1 = eca_layer(x_offset)
         x112 = layers.add([channel_attention_map1, output])
