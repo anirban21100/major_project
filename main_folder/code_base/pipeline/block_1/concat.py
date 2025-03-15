@@ -3,9 +3,10 @@ from keras import layers
 from code_base.pipeline.block_1.block_1 import Block1
 from code_base.pipeline.block_1.eca import ECALayer
 
+
 class Concat(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x_offset = inputs

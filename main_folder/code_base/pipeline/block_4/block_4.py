@@ -1,18 +1,19 @@
 from code_base.pipeline.block_3.dcl import DCL
 import tensorflow as tf
-from tensorflow.python.keras.layers import (
+from tensorflow.keras.layers import (
     Activation,
     Add,
     BatchNormalization,
     Concatenate,
     ReLU,
     SeparableConv2D,
-    LeakyReLU
+    LeakyReLU,
 )
+
 
 class Block4(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x = DCL()(inputs)

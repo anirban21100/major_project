@@ -11,7 +11,7 @@ from tensorflow.keras.layers import (
 
 class DCL(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x111 = Concat()(inputs)

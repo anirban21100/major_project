@@ -1,6 +1,6 @@
 import tensorflow as tf
 from code_base.pipeline.block_2.dcl import DCL
-from tensorflow.python.keras.layers import (
+from tensorflow.keras.layers import (
     Activation,
     Add,
     BatchNormalization,
@@ -13,7 +13,7 @@ from tensorflow.python.keras.layers import (
 
 class Block3(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         # Input to dense block

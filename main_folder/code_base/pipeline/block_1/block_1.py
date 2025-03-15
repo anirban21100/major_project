@@ -7,13 +7,13 @@ from tensorflow.keras.layers import (
     LeakyReLU,
     ReLU,
     SeparableConv2D,
-    Input
+    Input,
 )
 
 
 class Block1(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x = inputs

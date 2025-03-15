@@ -1,5 +1,10 @@
 import tensorflow as tf
-from tensorflow.python.keras.layers import Conv1D, GlobalAveragePooling2D, Multiply, Reshape
+from tensorflow.keras.layers import  (
+    Conv1D,
+    GlobalAveragePooling2D,
+    Multiply,
+    Reshape,
+)
 
 
 class ECALayer(tf.keras.layers.Layer):
@@ -24,5 +29,3 @@ class ECALayer(tf.keras.layers.Layer):
             y, (-1, 1, 1, y.shape[-1])
         )  # Shape: (batch_size, 1, 1, channels)
         return inputs * y
-
-

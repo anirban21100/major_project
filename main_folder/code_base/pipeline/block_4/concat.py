@@ -4,9 +4,10 @@ from code_base.pipeline.block_4.block_4 import Block4
 from code_base.pipeline.block_4.eca import ECALayer
 from code_base.pipeline.block_3.dcl import DCL
 
+
 class Concat(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x_offset = DCL()(inputs)

@@ -1,6 +1,7 @@
 import tensorflow as tf
+
 # from tensorflow import keras
-from tensorflow.python.keras.layers import (
+from tensorflow.keras.layers import (
     ELU,
     BatchNormalization,
     Input,

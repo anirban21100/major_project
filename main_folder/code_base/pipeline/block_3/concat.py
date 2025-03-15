@@ -7,7 +7,7 @@ from code_base.pipeline.block_2.dcl import DCL
 
 class Concat(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x_offset = DCL()(inputs)

@@ -1,6 +1,6 @@
 import tensorflow as tf
-from tensorflow.python.keras import layers
-from tensorflow.python.keras.layers import (
+from tensorflow.keras import layers
+from tensorflow.keras.layers import (
     Conv1D,
     GlobalAveragePooling2D,
     Lambda,

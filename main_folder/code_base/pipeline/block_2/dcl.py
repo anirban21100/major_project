@@ -1,6 +1,6 @@
 from code_base.pipeline.block_2.concat import Concat
 import tensorflow as tf
-from tensorflow.python.keras.layers import (
+from tensorflow.keras.layers import (
     ELU,
     BatchNormalization,
     LeakyReLU,
@@ -11,7 +11,7 @@ from tensorflow.python.keras.layers import (
 
 class DCL(tf.keras.layers.Layer):
     def __init__(self):
-      super().__init__()
+        super().__init__()
 
     def call(self, inputs):
         x112 = Concat()(inputs)
