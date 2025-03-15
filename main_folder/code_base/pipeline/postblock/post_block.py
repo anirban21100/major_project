@@ -1,7 +1,7 @@
 # from code_base.pipeline.block_4.dcl import DCL
 import tensorflow as tf
 from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout
-from tensorflow.keras.models import Model
+# from tensorflow.keras.models import Model
 
 
 class PostBlock(tf.keras.layers.Layer):
