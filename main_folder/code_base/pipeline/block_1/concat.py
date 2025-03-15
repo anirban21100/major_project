@@ -1,7 +1,7 @@
 import tensorflow as tf
 from keras import layers
-from .block1 import Block1
-from eca import ECALayer
+from code_base.pipeline.block_1.block_1 import Block1
+from code_base.pipeline.block_1.eca import ECALayer
 
 class Concat(tf.keras.layers.Layer):
     def __init__(self):

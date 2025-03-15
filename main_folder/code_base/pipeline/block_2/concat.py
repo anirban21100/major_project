@@ -1,7 +1,7 @@
 import tensorflow as tf
 from keras import layers
-from block_2 import Block2
-from eca import ECALayer
+from code_base.pipeline.block_2.block_2 import Block2
+from code_base.pipeline.block_2.eca import ECALayer
 from code_base.pipeline.block_1.dcl import DCL
 
 
