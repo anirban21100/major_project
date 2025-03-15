@@ -1,7 +1,6 @@
 from code_base.pipeline.block_4.dcl import DCL
-from code_base.utils.constants import input_shape
 import tensorflow as tf
-from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input
+from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout
 from tensorflow.keras.models import Model
 
 
@@ -10,10 +9,8 @@ class PostBlock(tf.keras.layers.Layer):
         super().__init__()
 
     def call(self, inputs):
-        x_offset = DCL()(inputs)
+        x_offset = inputs
         x15 = GlobalMaxPooling2D()(x_offset)
-        # img_input = Input(input_shape)
-        x = tf.keras.layers.Dropout(0.3)(x15)
+        x = Dropout(0.3)(x15)
         output = Dense(6, activation="softmax")(x)
-        # model = Model(img_input, output)
         return output

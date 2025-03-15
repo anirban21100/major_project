@@ -8,13 +8,12 @@ from tensorflow.keras.layers import (
     SeparableConv2D,
 )
 
-
-class DCL(tf.keras.layers.Layer):
+class DCL1(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
     def call(self, inputs):
-        x111 = Concat()(inputs)
+        x111 = inputs
         x = SeparableConv2D(
             32,
             (3, 3),

@@ -9,12 +9,12 @@ from tensorflow.keras.layers import (
 )
 
 
-class DCL(tf.keras.layers.Layer):
+class DCL4(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
     def call(self, inputs):
-        x114 = Concat()(inputs)
+        x114 = inputs
         x = SeparableConv2D(
             256,
             (3, 3),

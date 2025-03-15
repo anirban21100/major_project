@@ -5,14 +5,11 @@ from code_base.pipeline.block_2.eca import ECALayer
 from code_base.pipeline.block_1.dcl import DCL
 
 
-class Concat(tf.keras.layers.Layer):
+class Concat2(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
-    def call(self, inputs):
-        x_offset = DCL()(inputs)
-        output = Block2()(inputs)
-        eca_layer = ECALayer(k_size=3)
-        channel_attention_map1 = eca_layer(x_offset)
+    def call(self, *inputs):
+        channel_attention_map1, output = inputs
         x112 = layers.add([channel_attention_map1, output])
         return x112

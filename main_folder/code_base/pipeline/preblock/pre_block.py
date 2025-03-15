@@ -9,6 +9,7 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.regularizers import l2
 
+
 class PreBlock(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()

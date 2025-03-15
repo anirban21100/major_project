@@ -8,11 +8,9 @@ from tensorflow.keras.layers import (
     Reshape,
 )
 
-class ECALayer(tf.keras.layers.Layer):
+class ECALayer2(tf.keras.layers.Layer):
     def __init__(self, k_size=3, **kwargs):
-        super(ECALayer, self).__init__(
-            **kwargs
-        )  # Pass any extra arguments to the parent class
+        super().__init__()
         self.k_size = k_size
         self.avg_pool = tf.keras.layers.GlobalAveragePooling2D(keepdims=True)
         self.conv1d = tf.keras.layers.Conv1D(
