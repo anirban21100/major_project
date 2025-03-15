@@ -1,6 +1,6 @@
 import tensorflow as tf
 from keras import layers
-from block1 import Block1
+from .block1 import Block1
 from eca import ECALayer
 
 class Concat(tf.keras.layers.Layer):
