@@ -16,4 +16,4 @@ class PostBlock(tf.keras.layers.Layer):
         x = tf.keras.layers.Dropout(0.3)(x15)
         output = Dense(6, activation="softmax")(x)
         model = Model(img_input, output)
-        return output
+        return model
