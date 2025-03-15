@@ -1,4 +1,4 @@
-from code_base.pipeline.block_4.concat import Concat
+# from code_base.pipeline.block_4.concat import Concat
 import tensorflow as tf
 from tensorflow.keras.layers import (
     ELU,
