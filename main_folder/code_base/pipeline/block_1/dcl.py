@@ -1,4 +1,4 @@
-from concat import Concat
+from block_1.concat import Concat
 import tensorflow as tf
 from tensorflow.python.keras.layers import (
     ELU,
