@@ -12,8 +12,8 @@ class PostBlock(tf.keras.layers.Layer):
     def call(self, inputs):
         x_offset = DCL()(inputs)
         x15 = GlobalMaxPooling2D()(x_offset)
-        # img_input = Input(input_shape)
+        img_input = Input(input_shape)
         x = tf.keras.layers.Dropout(0.3)(x15)
         output = Dense(6, activation="softmax")(x)
-        # model = Model(img_input, output)
+        model = Model(img_input, output)
         return output
