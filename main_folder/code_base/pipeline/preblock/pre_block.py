@@ -1,6 +1,5 @@
 import tensorflow as tf
-from tensorflow import keras
-from keras.layers import (
+from tensorflow.keras.layers import (
     ELU,
     BatchNormalization,
     Input,
@@ -10,7 +9,7 @@ from keras.layers import (
 )
 from tensorflow.keras.regularizers import l2
 
-class PreBlock(keras.layers.Layer):
+class PreBlock(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
