@@ -34,4 +34,5 @@ class PreBlock(tf.keras.layers.Layer):
         return x_offset
 
     def compute_output_shape(self, input_shape):
-        return self.out_shape
+        input_shape = self.out_shape
+        return input_shape
