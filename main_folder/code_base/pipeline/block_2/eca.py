@@ -6,6 +6,7 @@ from tensorflow.keras.layers import (
     Lambda,
     Multiply,
     Reshape,
+    Activation
 )
 
 class ECALayer2(tf.keras.layers.Layer):
@@ -14,14 +15,14 @@ class ECALayer2(tf.keras.layers.Layer):
         self.k_size = k_size
 
     def build(self):
-        self.avg_pool = tf.keras.layers.GlobalAveragePooling2D(keepdims=True)
-        self.conv1d = tf.keras.layers.Conv1D(
+        self.avg_pool = GlobalAveragePooling2D(keepdims=True)
+        self.conv1d = Conv1D(
             filters=1,
             kernel_size=self.k_size,
             padding="same",
             use_bias=False
         )
-        self.sigmoid = tf.keras.layers.Activation("sigmoid")
+        self.sigmoid = Activation("sigmoid")
 
     def call(self, inputs):
         y = self.avg_pool(inputs)  # Shape: (batch_size, 1, 1, channels)

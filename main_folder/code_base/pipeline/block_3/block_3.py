@@ -40,5 +40,5 @@ class Block3(tf.keras.layers.Layer):
         layer3 = self.conv2d(concat2)
         layer3 = self.bn(layer3)
         layer3 = self.leaky(layer3)
-        output = self.leaky([concat2, layer3])
+        output = self.add([concat2, layer3])
         return output
