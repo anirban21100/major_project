@@ -24,21 +24,21 @@ class Block1(tf.keras.layers.Layer):
             pointwise_initializer="he_normal",
             use_bias=False,
         ) for _ in range(3)]
-        self.bn = BatchNormalization()
-        self.leaky = LeakyReLU(alpha=0.2)
-        self.add = Add()
+        self.bn = [BatchNormalization() for _ in range(3)]
+        self.leaky = [LeakyReLU(alpha=0.2) for _ in range(3)]
+        self.add = [Add() for _ in range(2)]
 
     def call(self, inputs):
         x = inputs
         layer1 = self.conv2d[0](x)
-        layer1 = self.bn(layer1)
-        layer1 = self.leaky(layer1)
+        layer1 = self.bn[0](layer1)
+        layer1 = self.leaky[0](layer1)
         layer2 = self.conv2d[1](layer1)
-        layer2 = self.bn(layer2)
-        layer2 = self.leaky(layer2)
-        concat2 = self.add([layer1, layer2])
+        layer2 = self.bn[1](layer2)
+        layer2 = self.leaky[1](layer2)
+        concat2 = self.add[0]([layer1, layer2])
         layer3 = self.conv2d[2](concat2)
-        layer3 = self.bn(layer3)
-        layer3 = self.leaky(layer3)
-        output = self.add([concat2, layer3])
+        layer3 = self.bn[2](layer3)
+        layer3 = self.leaky[2](layer3)
+        output = self.add[1]([concat2, layer3])
         return output
