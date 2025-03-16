@@ -31,3 +31,6 @@ class PreBlock(tf.keras.layers.Layer):
         x = self.bn(x)
         x_offset = self.leaky(x)
         return x_offset
+
+    def compute_output_shape(self, input_shape):
+        return input_shape
