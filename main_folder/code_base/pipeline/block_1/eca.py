@@ -11,9 +11,14 @@ class ECALayer1(tf.keras.layers.Layer):
     def __init__(self, k_size=3, **kwargs):
         super().__init__()
         self.k_size = k_size
+
+    def build(self):
         self.avg_pool = GlobalAveragePooling2D(keepdims=True)
         self.conv1d = Conv1D(
-            filters=1, kernel_size=k_size, padding="same", use_bias=False
+            filters=1,
+            kernel_size=self.k_size,
+            padding="same",
+            use_bias=False
         )
         self.sigmoid = Activation("sigmoid")
 

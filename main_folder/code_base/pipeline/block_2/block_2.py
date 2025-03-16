@@ -10,46 +10,35 @@ from tensorflow.keras.layers import (
     SeparableConv2D,
 )
 
-
 class Block2(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
+    def build(self):
+        self.conv2d = SeparableConv2D(
+            32,
+            (3, 3),
+            strides=(1, 1),
+            padding="same",
+            depthwise_initializer="he_normal",
+            pointwise_initializer="he_normal",
+            use_bias=False,
+        )
+        self.bn = BatchNormalization()
+        self.leaky = LeakyReLU(alpha=0.2)
+        self.add = Add()
+
     def call(self, inputs):
         x = inputs
-        layer1 = SeparableConv2D(
-            32,
-            (3, 3),
-            strides=(1, 1),
-            padding="same",
-            depthwise_initializer="he_normal",
-            pointwise_initializer="he_normal",
-            use_bias=False,
-        )(x)
-        layer1 = BatchNormalization()(layer1)
-        layer1 = LeakyReLU(alpha=0.2)(layer1)
-        layer2 = SeparableConv2D(
-            32,
-            (3, 3),
-            strides=(1, 1),
-            padding="same",
-            depthwise_initializer="he_normal",
-            pointwise_initializer="he_normal",
-            use_bias=False,
-        )(layer1)
-        layer2 = BatchNormalization()(layer2)
-        layer2 = LeakyReLU(alpha=0.2)(layer2)
-        concat2 = Add()([layer1, layer2])
-        layer3 = SeparableConv2D(
-            32,
-            (3, 3),
-            strides=(1, 1),
-            padding="same",
-            depthwise_initializer="he_normal",
-            pointwise_initializer="he_normal",
-            use_bias=False,
-        )(concat2)
-        layer3 = BatchNormalization()(layer3)
-        layer3 = LeakyReLU(alpha=0.2)(layer3)
-        output = Add()([concat2, layer3])
+        layer1 = self.conv2d(x)
+        layer1 = self.bn(layer1)
+        layer1 = self.leaky(layer1)
+        layer2 = self.conv2d(layer1)
+        layer2 = self.bn(layer2)
+        layer2 = self.leaky(layer2)
+        concat2 = self.add([layer1, layer2])
+        layer3 = self.conv2d(concat2)
+        layer3 = self.bn(layer3)
+        layer3 = self.leaky(layer3)
+        output = self.add([concat2, layer3])
         return output

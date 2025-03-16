@@ -3,14 +3,18 @@ import tensorflow as tf
 from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout
 # from tensorflow.keras.models import Model
 
-
 class PostBlock(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
+    def build(self):
+        self.globalpool = GlobalMaxPooling2D()
+        self.dropout = Dropout(0.3)
+        self.dense = Dense(6, activation="softmax")
+
     def call(self, inputs):
         x_offset = inputs
-        x15 = GlobalMaxPooling2D()(x_offset)
-        x = Dropout(0.3)(x15)
-        output = Dense(6, activation="softmax")(x)
+        x15 = self.globalpool(x_offset)
+        x = self.dropout(x15)
+        output =self.dense(x)
         return output

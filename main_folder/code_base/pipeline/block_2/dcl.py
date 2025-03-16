@@ -8,14 +8,12 @@ from tensorflow.keras.layers import (
     SeparableConv2D,
 )
 
-
 class DCL2(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
-    def call(self, inputs):
-        x112 = inputs
-        x = SeparableConv2D(
+    def build(self):
+        self.conv2d = SeparableConv2D(
             64,
             (3, 3),
             strides=(1, 1),
@@ -24,8 +22,19 @@ class DCL2(tf.keras.layers.Layer):
             pointwise_initializer="he_normal",
             activation=LeakyReLU(alpha=0.2),
             use_bias=False,
-        )(x112)
-        x = BatchNormalization()(x)
-        x_offset = LeakyReLU(alpha=0.2)(x)
-        x_offset = MaxPooling2D((3, 3), strides=(2, 2), padding="same")(x_offset)
+        )
+        self.bn = BatchNormalization()
+        self.leaky = LeakyReLU(alpha=0.2)
+        self.maxpool = MaxPooling2D(
+            (3, 3),
+            strides=(2, 2),
+            padding="same"
+        )
+
+    def call(self, inputs):
+        x112 = inputs
+        x = self.conv2d(x112)
+        x = self.bn(x)
+        x_offset = self.leaky(x)
+        x_offset = self.maxpool(x_offset)
         return x_offset
