@@ -30,7 +30,8 @@ class PreBlock(tf.keras.layers.Layer):
         x = self.conv2d(img_input)
         x = self.bn(x)
         x_offset = self.leaky(x)
+        self.out_shape = tf.TensorShape(x_offset)
         return x_offset
 
     def compute_output_shape(self, input_shape):
-        return tf.TensorShape(input_shape)
+        return self.out_shape
