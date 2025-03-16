@@ -26,7 +26,7 @@ from code_base.pipeline.block_4.dcl import DCL4
 from code_base.pipeline.postblock.post_block import PostBlock
 
 class HARModel(tf.keras.Model):
-    def __init__(self):
+    def __init__(self, inputs):
         super().__init__()
         self.PreBlock = PreBlock()
 

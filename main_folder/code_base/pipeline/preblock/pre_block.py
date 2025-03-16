@@ -14,8 +14,8 @@ class PreBlock(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
 
-    def call(self, img_input):
-        x = SeparableConv2D(
+    def build(self):
+        self.conv2d = SeparableConv2D(
             16,
             (3, 3),
             strides=(1, 1),
@@ -23,7 +23,12 @@ class PreBlock(tf.keras.layers.Layer):
             depthwise_initializer="he_normal",
             pointwise_initializer="he_normal",
             use_bias=False,
-        )(img_input)
-        x = BatchNormalization()(x)
-        x_offset = LeakyReLU(alpha=0.2)(x)
+        )
+        self.bn = BatchNormalization()
+        self.leaky = LeakyReLU(alpha=0.2)
+
+    def call(self, img_input):
+        x = self.conv2d(img_input)
+        x = self.bn(x)
+        x_offset = self.leaky(x)
         return x_offset

@@ -4,17 +4,18 @@ from tensorflow.keras.layers import (
     GlobalAveragePooling2D,
     Multiply,
     Reshape,
+    Activation
 )
 
 class ECALayer1(tf.keras.layers.Layer):
     def __init__(self, k_size=3, **kwargs):
-        super().__init__() 
+        super().__init__()
         self.k_size = k_size
-        self.avg_pool = tf.keras.layers.GlobalAveragePooling2D(keepdims=True)
-        self.conv1d = tf.keras.layers.Conv1D(
+        self.avg_pool = GlobalAveragePooling2D(keepdims=True)
+        self.conv1d = Conv1D(
             filters=1, kernel_size=k_size, padding="same", use_bias=False
         )
-        self.sigmoid = tf.keras.layers.Activation("sigmoid")
+        self.sigmoid = Activation("sigmoid")
 
     def call(self, inputs):
         y = self.avg_pool(inputs)  # Shape: (batch_size, 1, 1, channels)
