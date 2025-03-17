@@ -25,7 +25,7 @@ class Block4(tf.keras.layers.Layer):
             use_bias=False,
         ) for _ in range(3)]
         self.bn = [BatchNormalization() for _ in range(3)]
-        self.leaky = [LeakyReLU(alpha=0.2) for _ in range(3)]
+        self.leaky = [LeakyReLU(negative_slope=0.2) for _ in range(3)]
         self.add = [Add() for _ in range(2)]
 
     def call(self, inputs):
