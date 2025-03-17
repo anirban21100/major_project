@@ -27,8 +27,9 @@ from code_base.pipeline.postblock.post_block import PostBlock
 
 
 class HARModel(tf.keras.Model):
-    def __init__(self):
+    def __init__(self, num_classes):
         super().__init__()
+        self.num_classes = num_classes
 
     def build(self):
         self.PreBlock = PreBlock()
@@ -53,7 +54,7 @@ class HARModel(tf.keras.Model):
         self.block4_concat = Concat4()
         self.block4_dcl = DCL4()
 
-        self.PostBlock = PostBlock()
+        self.PostBlock = PostBlock(num_classes)
 
     def call(self, inputs):
         PreBlock = self.PreBlock(inputs)
