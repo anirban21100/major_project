@@ -1,4 +1,4 @@
-from utils.constants import img_cols, img_rows
+from code_base.utils.constants import img_cols, img_rows
 import tensorflow as tf
 from tensorflow import keras
 from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator
