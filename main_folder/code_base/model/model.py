@@ -27,7 +27,7 @@ from code_base.pipeline.postblock.post_block import PostBlock
 
 
 class HARModel(tf.keras.Model):
-    def __init__(self, num_classes, *args, **kwargs):
+    def __init__(self, num_classes=15, *args, **kwargs):
         super().__init__()
         self.num_classes = num_classes
 
