@@ -54,7 +54,7 @@ class HARModel(tf.keras.Model):
         self.block4_concat = Concat4()
         self.block4_dcl = DCL4()
 
-        self.PostBlock = PostBlock(num_classes)
+        self.PostBlock = PostBlock(self.num_classes)
 
     def call(self, inputs):
         PreBlock = self.PreBlock(inputs)
