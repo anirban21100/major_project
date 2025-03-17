@@ -3,7 +3,6 @@ import tensorflow as tf
 from tensorflow import keras
 from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator
 
-
 class PreprocessData:
     def transform(DIR, batch_size: int, shuffle: bool):
         datagen = ImageDataGenerator(rescale=1 / 255.0)
