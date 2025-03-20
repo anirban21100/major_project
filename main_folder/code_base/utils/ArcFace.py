@@ -1,7 +1,6 @@
 import tensorflow as tf
 import math
 
-
 class ArcMarginProduct(tf.keras.layers.Layer):
     """
     Implements large margin arc distance.
@@ -29,8 +28,7 @@ class ArcMarginProduct(tf.keras.layers.Layer):
         self.mm = tf.math.sin(math.pi - m) * m
 
     def build(self, input_shape):
-        super().build()
-
+        
         self.W = self.add_weight(
             name="W",
             shape=(int(input_shape[0][-1]), self.n_classes),
