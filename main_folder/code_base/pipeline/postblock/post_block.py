@@ -2,7 +2,6 @@ import tensorflow as tf
 from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout
 from code_base.utils.ArcFace import ArcMarginProduct
 
-
 class PostBlock(tf.keras.layers.Layer):
     def __init__(self, num_classes):
         super().__init__()

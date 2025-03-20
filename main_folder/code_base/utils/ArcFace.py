@@ -29,7 +29,7 @@ class ArcMarginProduct(tf.keras.layers.Layer):
         self.mm = tf.math.sin(math.pi - m) * m
 
     def build(self, input_shape):
-        super(ArcMarginProduct, self).build(input_shape[0])
+        super().build()
 
         self.W = self.add_weight(
             name="W",
