@@ -1,5 +1,6 @@
 import tensorflow as tf
 import math
+from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout, Softmax
 
 class ArcMarginProduct(tf.keras.layers.Layer):
     """
@@ -26,9 +27,10 @@ class ArcMarginProduct(tf.keras.layers.Layer):
         self.sin_m = tf.math.sin(m)
         self.th = tf.math.cos(math.pi - m)
         self.mm = tf.math.sin(math.pi - m) * m
+        self.softmax = Softmax(dtype="float32")
 
     def build(self, input_shape):
-        
+
         self.W = self.add_weight(
             name="W",
             shape=(int(input_shape[0][-1]), self.n_classes),
@@ -56,4 +58,5 @@ class ArcMarginProduct(tf.keras.layers.Layer):
 
         output = (one_hot * phi) + ((1.0 - one_hot) * cosine)
         output *= self.s
+        output = self.softmax(output)
         return output
