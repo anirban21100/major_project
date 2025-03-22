@@ -58,5 +58,5 @@ class ArcMarginProduct(tf.keras.layers.Layer):
 
         output = (one_hot * phi) + ((1.0 - one_hot) * cosine)
         output *= self.s
-        output = self.softmax(output)
+        # output = self.softmax(output)
         return output
