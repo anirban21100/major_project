@@ -55,10 +55,10 @@ class HARModel(tf.keras.Model):
         self.block4_concat = Concat4()
         self.block4_dcl = DCL4()
 
-        self.PostBlock = PostBlock(self.num_classes)
-        self.margin = ArcMarginProduct(
-            n_classes=self.num_classes, s=30, m=0.5, dtype="float32"
-        )
+        # self.PostBlock = PostBlock(self.num_classes)
+        # self.margin = ArcMarginProduct(
+        #     n_classes=self.num_classes, s=30, m=0.5, dtype="float32"
+        # )
 
     def call(self, inputs):
         inputs, y = inputs
@@ -83,6 +83,7 @@ class HARModel(tf.keras.Model):
         Concat4 = self.block4_concat(ECA4, Block4)
         DCL4 = self.block4_dcl(Concat4)
 
-        output = self.PostBlock(DCL4)
-        output = self.margin([output, y])
+        output = DCL4
+        # output = self.PostBlock(DCL4)
+        # output = self.margin([output, y])
         return output
