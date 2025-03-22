@@ -61,7 +61,7 @@ class HARModel(tf.keras.Model):
         # )
 
     def call(self, inputs):
-        inputs, y = inputs
+        # inputs, y = inputs
         PreBlock = self.PreBlock(inputs)
         Block1 = self.block1(PreBlock)
         ECA1 = self.block1_eca(Block1)
