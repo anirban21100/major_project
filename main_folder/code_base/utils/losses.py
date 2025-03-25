@@ -1,130 +1,62 @@
-import tensorflow.keras.backend as K
-from keras.layers import Layer
-from keras import regularizers
-
 import tensorflow as tf
+import math
+from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout, Softmax
 
+class ArcFace(tf.keras.layers.Layer):
+    """
+    Implements large margin arc distance.
 
-class ArcFace(Layer):
-    def __init__(self, n_classes=10, s=30.0, m=0.50, regularizer=None, **kwargs):
+    Reference:
+        https://arxiv.org/pdf/1801.07698.pdf
+        https://github.com/lyakaap/Landmark2019-1st-and-3rd-Place-Solution/
+            blob/master/src/modeling/metric_learning.py
+    """
+
+    def __init__(
+        self, n_classes, s=30, m=0.50, easy_margin=False, ls_eps=0.0, **kwargs
+    ):
+
         super(ArcFace, self).__init__(**kwargs)
+
         self.n_classes = n_classes
         self.s = s
         self.m = m
-        self.regularizer = regularizers.get(regularizer)
+        self.ls_eps = ls_eps
+        self.easy_margin = easy_margin
+        self.cos_m = tf.math.cos(m)
+        self.sin_m = tf.math.sin(m)
+        self.th = tf.math.cos(math.pi - m)
+        self.mm = tf.math.sin(math.pi - m) * m
+        self.softmax = Softmax(dtype="float32")
 
     def build(self, input_shape):
-        super(ArcFace, self).build(input_shape[0])
-        self.W = self.add_weight(name='W',
-                                shape=(input_shape[0][-1], self.n_classes),
-                                initializer='glorot_uniform',
-                                trainable=True,
-                                regularizer=self.regularizer)
+
+        self.W = self.add_weight(
+            name="W",
+            shape=(int(input_shape[0][-1]), self.n_classes),
+            initializer="glorot_uniform",
+            dtype="float32",
+            trainable=True,
+            regularizer=None,
+        )
 
     def call(self, inputs):
-        x, y = inputs
-        c = K.shape(x)[-1]
-        # normalize feature
-        x = tf.nn.l2_normalize(x, axis=1)
-        # normalize weights
-        W = tf.nn.l2_normalize(self.W, axis=0)
-        # dot product
-        logits = x @ W
-        # add margin
-        # clip logits to prevent zero division when backward
-        theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
-        target_logits = tf.cos(theta + self.m)
-        # sin = tf.sqrt(1 - logits**2)
-        # cos_m = tf.cos(logits)
-        # sin_m = tf.sin(logits)
-        # target_logits = logits * cos_m - sin * sin_m
-        #
-        logits = logits * (1 - y) + target_logits * y
-        # feature re-scale
-        logits *= self.s
-        out = tf.nn.softmax(logits)
+        X, y = inputs
+        y = tf.cast(y, dtype=tf.int32)
+        cosine = tf.matmul(
+            tf.math.l2_normalize(X, axis=1), tf.math.l2_normalize(self.W, axis=0)
+        )
+        sine = tf.math.sqrt(1.0 - tf.math.pow(cosine, 2))
+        phi = cosine * self.cos_m - sine * self.sin_m
+        if self.easy_margin:
+            phi = tf.where(cosine > 0, phi, cosine)
+        else:
+            phi = tf.where(cosine > self.th, phi, cosine - self.mm)
+        one_hot = tf.cast(tf.one_hot(y, depth=self.n_classes), dtype=cosine.dtype)
+        if self.ls_eps > 0:
+            one_hot = (1 - self.ls_eps) * one_hot + self.ls_eps / self.n_classes
 
-        return out
-
-    def compute_output_shape(self, input_shape):
-        return (None, self.n_classes)
-
-
-class SphereFace(Layer):
-    def __init__(self, n_classes=10, s=30.0, m=1.35, regularizer=None, **kwargs):
-        super(SphereFace, self).__init__(**kwargs)
-        self.n_classes = n_classes
-        self.s = s
-        self.m = m
-        self.regularizer = regularizers.get(regularizer)
-
-    def build(self, input_shape):
-        super(SphereFace, self).build(input_shape[0])
-        self.W = self.add_weight(name='W',
-                                shape=(input_shape[0][-1], self.n_classes),
-                                initializer='glorot_uniform',
-                                trainable=True,
-                                regularizer=self.regularizer)
-
-    def call(self, inputs):
-        x, y = inputs
-        c = K.shape(x)[-1]
-        # normalize feature
-        x = tf.nn.l2_normalize(x, axis=1)
-        # normalize weights
-        W = tf.nn.l2_normalize(self.W, axis=0)
-        # dot product
-        logits = x @ W
-        # add margin
-        # clip logits to prevent zero division when backward
-        theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
-        target_logits = tf.cos(self.m * theta)
-        #
-        logits = logits * (1 - y) + target_logits * y
-        # feature re-scale
-        logits *= self.s
-        out = tf.nn.softmax(logits)
-
-        return out
-
-    def compute_output_shape(self, input_shape):
-        return (None, self.n_classes)
-
-
-class CosFace(Layer):
-    def __init__(self, n_classes=10, s=30.0, m=0.35, regularizer=None, **kwargs):
-        super(CosFace, self).__init__(**kwargs)
-        self.n_classes = n_classes
-        self.s = s
-        self.m = m
-        self.regularizer = regularizers.get(regularizer)
-
-    def build(self, input_shape):
-        super(CosFace, self).build(input_shape[0])
-        self.W = self.add_weight(name='W',
-                                shape=(input_shape[0][-1], self.n_classes),
-                                initializer='glorot_uniform',
-                                trainable=True,
-                                regularizer=self.regularizer)
-
-    def call(self, inputs):
-        x, y = inputs
-        c = K.shape(x)[-1]
-        # normalize feature
-        x = tf.nn.l2_normalize(x, axis=1)
-        # normalize weights
-        W = tf.nn.l2_normalize(self.W, axis=0)
-        # dot product
-        logits = x @ W
-        # add margin
-        target_logits = logits - self.m
-        #
-        logits = logits * (1 - y) + target_logits * y
-        # feature re-scale
-        logits *= self.s
-        out = tf.nn.softmax(logits)
-
-        return out
-
-    def compute_output_shape(self, input_shape):
-        return (None, self.n_classes)
+        output = (one_hot * phi) + ((1.0 - one_hot) * cosine)
+        output *= self.s
+        # output = self.softmax(output)
+        return output
