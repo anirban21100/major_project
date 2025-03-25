@@ -23,10 +23,6 @@ from code_base.pipeline.block_4.eca import ECALayer4
 from code_base.pipeline.block_4.concat import Concat4
 from code_base.pipeline.block_4.dcl import DCL4
 
-from code_base.pipeline.postblock.post_block import PostBlock
-from code_base.utils.ArcFace import ArcMarginProduct
-
-
 class HARModel(tf.keras.Model):
     def __init__(self, num_classes=15, *args, **kwargs):
         super().__init__(**kwargs)
@@ -55,11 +51,6 @@ class HARModel(tf.keras.Model):
         self.block4_concat = Concat4()
         self.block4_dcl = DCL4()
 
-        # self.PostBlock = PostBlock(self.num_classes)
-        # self.margin = ArcMarginProduct(
-        #     n_classes=self.num_classes, s=30, m=0.5, dtype="float32"
-        # )
-
     def call(self, inputs):
         # inputs, y = inputs
         PreBlock = self.PreBlock(inputs)
@@ -84,6 +75,4 @@ class HARModel(tf.keras.Model):
         DCL4 = self.block4_dcl(Concat4)
 
         output = DCL4
-        # output = self.PostBlock(DCL4)
-        # output = self.margin([output, y])
         return output
