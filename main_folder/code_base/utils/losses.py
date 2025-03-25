@@ -1,4 +1,4 @@
-from keras import backend as K
+import tensorflow.keras.backend as K
 from keras.layers import Layer
 from keras import regularizers
 
