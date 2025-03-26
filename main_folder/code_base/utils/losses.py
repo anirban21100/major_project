@@ -105,7 +105,8 @@ class SphereFace(tf.keras.layers.Layer):
 
     def call(self, inputs):
         x, y = inputs
-        c = K.shape(x)[-1]
+        # c = K.shape(x)[-1]
+        y = tf.cast(y, dtype=tf.int32)
         # normalize feature
         x = tf.nn.l2_normalize(x, axis=1)
         # normalize weights
@@ -116,13 +117,12 @@ class SphereFace(tf.keras.layers.Layer):
         # clip logits to prevent zero division when backward
         theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
         target_logits = tf.cos(self.m * theta)
+        y = tf.cast(tf.one_hot(y, depth=self.n_classes), dtype=logits.dtype)
         #
         logits = logits * (1 - y) + target_logits * y
         # feature re-scale
         logits *= self.s
-        out = tf.nn.softmax(logits)
-
-        return out
+        return logits
 
     def compute_output_shape(self, input_shape):
         return (None, self.n_classes)
