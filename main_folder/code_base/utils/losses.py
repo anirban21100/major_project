@@ -80,7 +80,7 @@ class SphereFace(tf.keras.layers.Layer):
         self.n_classes = n_classes
         self.s = s
         self.m = m
-        self.regularizer = tf.keras.regularizers.get(regularizer)
+        self.regularizer = regularizer
 
     def build(self, input_shape):
 
@@ -91,6 +91,17 @@ class SphereFace(tf.keras.layers.Layer):
             trainable=True,
             regularizer=self.regularizer,
         )
+
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update({
+            'n_classes': self.n_classes,
+            's': self.s,
+            'm': self.m,
+            'regularizer' : self.regularizer,
+        })
+        return config
 
     def call(self, inputs):
         x, y = inputs
