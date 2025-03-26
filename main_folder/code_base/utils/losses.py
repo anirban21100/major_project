@@ -3,6 +3,7 @@ import math
 from tensorflow.keras.layers import GlobalMaxPooling2D, Dense, Input, Dropout, Softmax
 import tf.keras.backend as K
 
+
 class ArcFace(tf.keras.layers.Layer):
     def __init__(
         self, n_classes, s=30, m=0.50, easy_margin=False, ls_eps=0.0, **kwargs
@@ -52,7 +53,8 @@ class ArcFace(tf.keras.layers.Layer):
         output *= self.s
         return output
 
-class SphereFace(tf.keras.layer.Layer):
+
+class SphereFace(tf.keras.layers.Layer):
     def __init__(self, n_classes=10, s=30.0, m=1.35, regularizer=None, **kwargs):
         super(SphereFace, self).__init__(**kwargs)
         self.n_classes = n_classes
@@ -62,11 +64,13 @@ class SphereFace(tf.keras.layer.Layer):
 
     def build(self, input_shape):
 
-        self.W = self.add_weight(name='W',
-                                shape=(input_shape[0][-1], self.n_classes),
-                                initializer='glorot_uniform',
-                                trainable=True,
-                                regularizer=self.regularizer)
+        self.W = self.add_weight(
+            name="W",
+            shape=(input_shape[0][-1], self.n_classes),
+            initializer="glorot_uniform",
+            trainable=True,
+            regularizer=self.regularizer,
+        )
 
     def call(self, inputs):
         x, y = inputs
