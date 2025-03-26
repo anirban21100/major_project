@@ -27,7 +27,7 @@ class ArcFace(tf.keras.layers.Layer):
         self.sin_m = tf.math.sin(m)
         self.th = tf.math.cos(math.pi - m)
         self.mm = tf.math.sin(math.pi - m) * m
-        self.regularizer = tf.keras.regularizers.get(regularizer)
+        self.regularizer = regularizer
 
     def build(self, input_shape):
 
