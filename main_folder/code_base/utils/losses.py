@@ -40,6 +40,19 @@ class ArcFace(tf.keras.layers.Layer):
             regularizer=self.regularizer,
         )
 
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update({
+            'n_classes': self.n_classes,
+            's': self.s,
+            'm': self.m,
+            'ls_eps': self.ls_eps,
+            'easy_margin': self.easy_margin,
+            'regularizer' : self.regularizer,
+        })
+        return config
+
     def call(self, inputs):
         X, y = inputs
         y = tf.cast(y, dtype=tf.int32)
