@@ -6,7 +6,14 @@ import tensorflow.keras.backend as K
 
 class ArcFace(tf.keras.layers.Layer):
     def __init__(
-        self, n_classes, s=30, m=0.50, easy_margin=False, ls_eps=0.0, **kwargs
+        self,
+        n_classes,
+        s=30,
+        m=0.50,
+        easy_margin=False,
+        ls_eps=0.0,
+        regularizer=None,
+        **kwargs
     ):
 
         super(ArcFace, self).__init__(**kwargs)
@@ -20,7 +27,7 @@ class ArcFace(tf.keras.layers.Layer):
         self.sin_m = tf.math.sin(m)
         self.th = tf.math.cos(math.pi - m)
         self.mm = tf.math.sin(math.pi - m) * m
-        self.softmax = Softmax(dtype="float32")
+        self.regularizer = tf.keras.regularizers.get(regularizer)
 
     def build(self, input_shape):
 
@@ -30,7 +37,7 @@ class ArcFace(tf.keras.layers.Layer):
             initializer="glorot_uniform",
             dtype="float32",
             trainable=True,
-            regularizer=None,
+            regularizer=self.regularizer,
         )
 
     def call(self, inputs):
