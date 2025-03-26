@@ -43,14 +43,16 @@ class ArcFace(tf.keras.layers.Layer):
     def get_config(self):
 
         config = super().get_config().copy()
-        config.update({
-            'n_classes': self.n_classes,
-            's': self.s,
-            'm': self.m,
-            'ls_eps': self.ls_eps,
-            'easy_margin': self.easy_margin,
-            'regularizer' : self.regularizer,
-        })
+        config.update(
+            {
+                "n_classes": self.n_classes,
+                "s": self.s,
+                "m": self.m,
+                "ls_eps": self.ls_eps,
+                "easy_margin": self.easy_margin,
+                "regularizer": self.regularizer,
+            }
+        )
         return config
 
     def call(self, inputs):
@@ -95,12 +97,14 @@ class SphereFace(tf.keras.layers.Layer):
     def get_config(self):
 
         config = super().get_config().copy()
-        config.update({
-            'n_classes': self.n_classes,
-            's': self.s,
-            'm': self.m,
-            'regularizer' : self.regularizer,
-        })
+        config.update(
+            {
+                "n_classes": self.n_classes,
+                "s": self.s,
+                "m": self.m,
+                "regularizer": self.regularizer,
+            }
+        )
         return config
 
     def call(self, inputs):
@@ -119,6 +123,59 @@ class SphereFace(tf.keras.layers.Layer):
         target_logits = tf.cos(self.m * theta)
         y = tf.cast(tf.one_hot(y, depth=self.n_classes), dtype=logits.dtype)
         #
+        logits = logits * (1 - y) + target_logits * y
+        # feature re-scale
+        logits *= self.s
+        return logits
+
+    def compute_output_shape(self, input_shape):
+        return (None, self.n_classes)
+
+
+class CosFace(tf.keras.layers.Layer):
+    def __init__(self, n_classes=10, s=30.0, m=0.35, regularizer=None, **kwargs):
+        super(CosFace, self).__init__(**kwargs)
+        self.n_classes = n_classes
+        self.s = s
+        self.m = m
+        self.regularizer = regularizer
+
+    def build(self, input_shape):
+        self.W = self.add_weight(
+            name="W",
+            shape=(input_shape[0][-1], self.n_classes),
+            initializer="glorot_uniform",
+            trainable=True,
+            regularizer=self.regularizer,
+        )
+
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update(
+            {
+                "n_classes": self.n_classes,
+                "s": self.s,
+                "m": self.m,
+                "regularizer": self.regularizer,
+            }
+        )
+        return config
+
+    def call(self, inputs):
+        x, y = inputs
+        # c = K.shape(x)[-1]
+        y = tf.cast(y, dtype=tf.int32)
+        # normalize feature
+        x = tf.nn.l2_normalize(x, axis=1)
+        # normalize weights
+        W = tf.nn.l2_normalize(self.W, axis=0)
+        # dot product
+        logits = x @ W
+        # add margin
+        target_logits = logits - self.m
+        #
+        y = tf.cast(tf.one_hot(y, depth=self.n_classes), dtype=logits.dtype)
         logits = logits * (1 - y) + target_logits * y
         # feature re-scale
         logits *= self.s
