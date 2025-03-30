@@ -195,13 +195,13 @@ class CurricularFace(tf.keras.layers.Layer):
         self.sin_m = math.sin(m)
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
+        self.regularizer = regularizer
         self.t = self.add_weight(
             shape=(), initializer=tf.keras.initializers.Zeros(), trainable=False
         )
-        self.regularizer = regularizer
 
     def build(self, input_shape):
-        self.kernel = self.add_weight(
+        self.W = self.add_weight(
             shape=(int(input_shape[0][-1]), self.n_classes),
             initializer="glorot_uniform",
             dtype="float32",
@@ -209,52 +209,32 @@ class CurricularFace(tf.keras.layers.Layer):
             regularizer=self.regularizer,
         )
 
-    def get_config(self):
-
-        config = super().get_config().copy()
-        config.update(
-            {
-                "n_classes": self.n_classes,
-                "s": self.s,
-                "m": self.m,
-                "regularizer": self.regularizer,
-            }
-        )
-        return config
-
     def call(self, inputs):
-        embeddings, labels = inputs
-        labels = tf.cast(labels, dtype=tf.int32)
-        embeddings = tf.nn.l2_normalize(embeddings, axis=1)
-        kernel_norm = tf.nn.l2_normalize(self.kernel, axis=0)
-        cos_theta = tf.linalg.matmul(embeddings, kernel_norm)
-        cos_theta = tf.clip_by_value(cos_theta, -1.0, 1.0)
-
-        target_logit = tf.gather_nd(
-            cos_theta, tf.stack([tf.range(tf.shape(labels)[0]), labels], axis=1)
+        X, y = inputs
+        y = tf.cast(y, dtype=tf.int32)
+        cos = tf.linalg.matmul(
+            tf.nn.l2_normalize(X, axis=1), tf.nn.l2_normalize(self.W, axis=0)
         )
-        target_logit = tf.expand_dims(target_logit, axis=1)
+        # cos_theta = tf.clip_by_value(cos_theta, -1.0, 1.0)  # Numerical stability
 
-        sin_theta = tf.sqrt(1.0 - tf.square(target_logit))
-        cos_theta_m = target_logit * self.cos_m - sin_theta * self.sin_m
+        # target_logit = tf.gather_nd(cos_theta, tf.stack([tf.range(tf.shape(labels)[0]), labels], axis=1))
+        # target_logit = tf.expand_dims(target_logit, axis=1)
 
-        mask = cos_theta > cos_theta_m
-        final_target_logit = tf.where(
-            target_logit > self.threshold, cos_theta_m, target_logit - self.mm
-        )
+        sin_theta = tf.sqrt(1.0 - tf.square(cos))
+        phi = cos * self.cos_m - sin_theta * self.sin_m
 
-        hard_example = tf.boolean_mask(cos_theta, mask)
-        new_t = 0.01 * tf.reduce_mean(target_logit) + (1 - 0.01) * self.t
-        self.t.assign(new_t)
-        cos_theta = tf.tensor_scatter_nd_update(
-            cos_theta, tf.where(mask), hard_example * (self.t + hard_example)
+        mask = cos > phi
+        phi = tf.where(cos > self.threshold, phi, cos - self.mm)
+
+        hard_example = tf.boolean_mask(cos, mask)
+        self.t = 0.01 * tf.reduce_mean(cos) + (1 - 0.01) * self.t
+        cos = tf.tensor_scatter_nd_update(
+            cos, tf.where(mask), hard_example * (self.t + hard_example)
         )
 
-        cos_theta = tf.tensor_scatter_nd_update(
-            cos_theta,
-            tf.stack([tf.range(tf.shape(labels)[0]), labels], axis=1),
-            final_target_logit,
-        )
+        one_hot = tf.cast(tf.one_hot(y, depth=self.n_classes), dtype=cos.dtype)
 
-        output = cos_theta * self.s
+        output = (one_hot * phi) + ((1.0 - one_hot) * cos)
+
+        output *= self.s
         return output
