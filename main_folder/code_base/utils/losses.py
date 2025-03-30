@@ -191,14 +191,11 @@ class CurricularFace(tf.keras.layers.Layer):
         self.n_classes = n_classes
         self.m = m
         self.s = s
-        self.cos_m = math.cos(m)
-        self.sin_m = math.sin(m)
-        self.threshold = math.cos(math.pi - m)
-        self.mm = math.sin(math.pi - m) * m
+        self.cos_m = tf.math.cos(m)
+        self.sin_m = tf.math.sin(m)
+        self.th = tf.math.cos(math.pi - m)
+        self.mm = tf.math.sin(math.pi - m) * m
         self.regularizer = regularizer
-        self.t = self.add_weight(
-            shape=(), initializer=tf.keras.initializers.Zeros(), trainable=False
-        )
 
     def get_config(self):
 
@@ -214,6 +211,11 @@ class CurricularFace(tf.keras.layers.Layer):
         return config
 
     def build(self, input_shape):
+
+        self.t = self.add_weight(
+            shape=(), initializer=tf.keras.initializers.Zeros(), trainable=False
+        )
+
         self.W = self.add_weight(
             shape=(int(input_shape[0][-1]), self.n_classes),
             initializer="glorot_uniform",
@@ -228,16 +230,13 @@ class CurricularFace(tf.keras.layers.Layer):
         cos = tf.linalg.matmul(
             tf.nn.l2_normalize(X, axis=1), tf.nn.l2_normalize(self.W, axis=0)
         )
-        # cos_theta = tf.clip_by_value(cos_theta, -1.0, 1.0)  # Numerical stability
-
-        # target_logit = tf.gather_nd(cos_theta, tf.stack([tf.range(tf.shape(labels)[0]), labels], axis=1))
-        # target_logit = tf.expand_dims(target_logit, axis=1)
+        # cos_theta = tf.clip_by_value(cos_theta, -1.0, 1.0)
 
         sin_theta = tf.sqrt(1.0 - tf.square(cos))
         phi = cos * self.cos_m - sin_theta * self.sin_m
 
         mask = cos > phi
-        phi = tf.where(cos > self.threshold, phi, cos - self.mm)
+        phi = tf.where(cos > self.th, phi, cos - self.mm)
 
         hard_example = tf.boolean_mask(cos, mask)
         self.t = 0.01 * tf.reduce_mean(cos) + (1 - 0.01) * self.t
