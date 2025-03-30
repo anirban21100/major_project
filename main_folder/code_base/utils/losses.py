@@ -209,8 +209,22 @@ class CurricularFace(tf.keras.layers.Layer):
             regularizer=self.regularizer,
         )
 
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update(
+            {
+                "n_classes": self.n_classes,
+                "s": self.s,
+                "m": self.m,
+                "regularizer": self.regularizer,
+            }
+        )
+        return config
+
     def call(self, inputs):
         embeddings, labels = inputs
+        labels = tf.cast(labels, dtype=tf.int32)
         embeddings = tf.nn.l2_normalize(embeddings, axis=1)
         kernel_norm = tf.nn.l2_normalize(self.kernel, axis=0)
         cos_theta = tf.linalg.matmul(embeddings, kernel_norm)
