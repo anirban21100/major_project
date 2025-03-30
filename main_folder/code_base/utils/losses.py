@@ -239,7 +239,8 @@ class CurricularFace(tf.keras.layers.Layer):
         phi = tf.where(cos > self.th, phi, cos - self.mm)
 
         hard_example = tf.boolean_mask(cos, mask)
-        self.t = 0.01 * tf.reduce_mean(cos) + (1 - 0.01) * self.t
+        new_t = 0.01 * tf.reduce_mean(cos) + (1 - 0.01) * self.t
+        self.t.assign(new_t)
         cos = tf.tensor_scatter_nd_update(
             cos, tf.where(mask), hard_example * (self.t + hard_example)
         )
