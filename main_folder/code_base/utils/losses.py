@@ -230,7 +230,7 @@ class CurricularFace(tf.keras.layers.Layer):
         cos = tf.linalg.matmul(
             tf.nn.l2_normalize(X, axis=1), tf.nn.l2_normalize(self.W, axis=0)
         )
-        # cos_theta = tf.clip_by_value(cos_theta, -1.0, 1.0)
+        cos = tf.clip_by_value(cos, -1.0, 1.0)
 
         sin_theta = tf.sqrt(1.0 - tf.square(cos))
         phi = cos * self.cos_m - sin_theta * self.sin_m
