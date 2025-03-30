@@ -200,6 +200,19 @@ class CurricularFace(tf.keras.layers.Layer):
             shape=(), initializer=tf.keras.initializers.Zeros(), trainable=False
         )
 
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update(
+            {
+                "n_classes": self.n_classes,
+                "s": self.s,
+                "m": self.m,
+                "regularizer": self.regularizer,
+            }
+        )
+        return config
+
     def build(self, input_shape):
         self.W = self.add_weight(
             shape=(int(input_shape[0][-1]), self.n_classes),
