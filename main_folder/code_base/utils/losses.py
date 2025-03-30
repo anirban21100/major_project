@@ -183,3 +183,64 @@ class CosFace(tf.keras.layers.Layer):
 
     def compute_output_shape(self, input_shape):
         return (None, self.n_classes)
+
+
+class CurricularFace(tf.keras.layers.Layer):
+    def __init__(self, n_classes, m=0.5, s=64.0, regularizer=None, **kwargs):
+        super(CurricularFace, self).__init__(**kwargs)
+        self.n_classes = n_classes
+        self.m = m
+        self.s = s
+        self.cos_m = math.cos(m)
+        self.sin_m = math.sin(m)
+        self.threshold = math.cos(math.pi - m)
+        self.mm = math.sin(math.pi - m) * m
+        self.t = self.add_weight(
+            shape=(), initializer=tf.keras.initializers.Zeros(), trainable=False
+        )
+        self.regularizer = regularizer
+
+    def build(self, input_shape):
+        self.kernel = self.add_weight(
+            shape=(int(input_shape[0][-1]), self.n_classes),
+            initializer="glorot_uniform",
+            dtype="float32",
+            trainable=True,
+            regularizer=self.regularizer,
+        )
+
+    def call(self, inputs):
+        embeddings, labels = inputs
+        embeddings = tf.nn.l2_normalize(embeddings, axis=1)
+        kernel_norm = tf.nn.l2_normalize(self.kernel, axis=0)
+        cos_theta = tf.linalg.matmul(embeddings, kernel_norm)
+        cos_theta = tf.clip_by_value(cos_theta, -1.0, 1.0)
+
+        target_logit = tf.gather_nd(
+            cos_theta, tf.stack([tf.range(tf.shape(labels)[0]), labels], axis=1)
+        )
+        target_logit = tf.expand_dims(target_logit, axis=1)
+
+        sin_theta = tf.sqrt(1.0 - tf.square(target_logit))
+        cos_theta_m = target_logit * self.cos_m - sin_theta * self.sin_m
+
+        mask = cos_theta > cos_theta_m
+        final_target_logit = tf.where(
+            target_logit > self.threshold, cos_theta_m, target_logit - self.mm
+        )
+
+        hard_example = tf.boolean_mask(cos_theta, mask)
+        new_t = 0.01 * tf.reduce_mean(target_logit) + (1 - 0.01) * self.t
+        self.t.assign(new_t)
+        cos_theta = tf.tensor_scatter_nd_update(
+            cos_theta, tf.where(mask), hard_example * (self.t + hard_example)
+        )
+
+        cos_theta = tf.tensor_scatter_nd_update(
+            cos_theta,
+            tf.stack([tf.range(tf.shape(labels)[0]), labels], axis=1),
+            final_target_logit,
+        )
+
+        output = cos_theta * self.s
+        return output
