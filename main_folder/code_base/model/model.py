@@ -55,22 +55,22 @@ class HARModel(tf.keras.Model):
         # inputs, y = inputs
         PreBlock = self.PreBlock(inputs)
         Block1 = self.block1(PreBlock)
-        ECA1 = self.block1_eca(Block1)
+        ECA1 = self.block1_eca(PreBlock)
         Concat1 = self.block1_concat(ECA1, Block1)
         DCL1 = self.block1_dcl(Concat1)
 
         Block2 = self.block2(DCL1)
-        ECA2 = self.block2_eca(Block2)
+        ECA2 = self.block2_eca(DCL1)
         Concat2 = self.block2_concat(ECA2, Block2)
         DCL2 = self.block2_dcl(Concat2)
 
         Block3 = self.block3(DCL2)
-        ECA3 = self.block3_eca(Block3)
+        ECA3 = self.block3_eca(DCL2)
         Concat3 = self.block3_concat(ECA3, Block3)
         DCL3 = self.block3_dcl(Concat3)
 
         Block4 = self.block4(DCL3)
-        ECA4 = self.block4_eca(Block4)
+        ECA4 = self.block4_eca(DCL3)
         Concat4 = self.block4_concat(ECA4, Block4)
         DCL4 = self.block4_dcl(Concat4)
 
